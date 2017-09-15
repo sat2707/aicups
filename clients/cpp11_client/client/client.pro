@@ -12,4 +12,7 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 HEADERS += \
-
+    core/api.h \
+    core/base_strategy.h \
+    core/client.h \
+    core/strategy.h
