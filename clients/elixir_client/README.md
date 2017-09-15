@@ -5,5 +5,5 @@ Elixir client
 Build:
 > mix deps.get
 
-> mix run --no-halt
- 
+Run:
+>  WORLD_NAME="hostname" SOLUTION_ID="123" iex -S mix 
