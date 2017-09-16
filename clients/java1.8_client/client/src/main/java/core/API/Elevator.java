@@ -10,6 +10,7 @@ import java.util.*;
  */
 public class Elevator implements MessagesInterface {
     private Integer id;
+    private Double x;
     private Double y;
     private List<Passenger> passengers;
     private Integer state;
@@ -42,6 +43,10 @@ public class Elevator implements MessagesInterface {
         return this.type;
     }
 
+    public Double getX() {
+        return this.x;
+    }
+
     public Double getY() {
         return this.y;
     }
@@ -60,6 +65,11 @@ public class Elevator implements MessagesInterface {
 
     public Elevator(JSONObject elevator) {
         id = (int) (long) elevator.get("id");
+        if (elevator.get("x") instanceof Long) {
+            x = ((Long) elevator.get("x")).doubleValue();
+        } else {
+            x = (double) elevator.get("x");
+        }
         if (elevator.get("y") instanceof Long) {
             y = ((Long) elevator.get("y")).doubleValue();
         } else {
