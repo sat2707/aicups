@@ -25,6 +25,10 @@ public class Passenger implements MessagesInterface {
         return this.elevator != null;
     }
 
+    public Integer getElevator() {
+        return this.elevator;
+    }
+
     public List<JSONObject> getMessages() {
         return this.messages;
     }
@@ -80,6 +84,7 @@ public class Passenger implements MessagesInterface {
             y = (double) passenger.get("y");
         }
     }
+
     public void setElevator(Elevator elevator) {
         this.elevator = elevator.getId();
         JSONObject jo = new JSONObject();
@@ -90,5 +95,4 @@ public class Passenger implements MessagesInterface {
         jo.put("args", args);
         this.messages.add(jo);
     }
-
 }
