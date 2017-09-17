@@ -11,13 +11,14 @@ defmodule ElixirClient.Mixfile do
   end
 
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :exconstructor],
      mod: {ElixirClient, []}]
   end
 
   defp deps do
     [
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:exconstructor, "~> 1.1.0"}
     ]
   end
 end

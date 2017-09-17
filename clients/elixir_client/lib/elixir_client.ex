@@ -34,7 +34,7 @@ defmodule ElixirClient do
     IO.puts "SOLUTION_ID: #{inspect solution_id}"
 
     childrens = [
-      # Plug.Adapters.Cowboy.child_spec(:http, ElixirClient.Router, [], port: port),
+      worker(Strategy, []),
       worker(ElixirClient.Api, []),
       worker(ElixirClient.Client, [{host, port, solution_id}])
     ]

@@ -26,8 +26,8 @@ defmodule ElixirClient.Client do
   end
 
   def handle_cast({:send_actions, json_actions}, state) do
-    Logger.info "client send_actions #{inspect json_actions}"
-    json = Poison.encode!(json_actions)
+    # Logger.info "client send_actions #{inspect json_actions}"
+    json = Poison.encode!(json_actions) <> "\n"
     msg = String.to_char_list(json)
     :gen_tcp.send(state.socket, msg)    
     {:noreply, state}
@@ -39,13 +39,13 @@ defmodule ElixirClient.Client do
   end
 
   def handle_info(msg, state) do
-    Logger.info "handle_info msg=#{inspect msg}"
+    # Logger.info "handle_info msg=#{inspect msg}"
 
     {:noreply, state}
   end
 
   defp handle_json(state, %{"message" => "beginning"} = _json) do
-    Logger.info "client beginning"
+    # Logger.info "client beginning"
     {:noreply, %{state | transmitting: true}}
   end
 
@@ -56,7 +56,7 @@ defmodule ElixirClient.Client do
 
   # сообщение не beginning и не down
   defp handle_json(state, json) do
-    Logger.info "client rcv json=#{inspect json}"
+    # Logger.info "client rcv json=#{inspect json}"
     ElixirClient.Api.generate_actions(json)
     {:noreply, state}
   end
