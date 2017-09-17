@@ -153,7 +153,7 @@ class Debug {
         this._messages.push({
             'command': 'log',
             'args': {
-                'text': String(text)
+                'text': String(text.stack || text)
             }
         })
     }
