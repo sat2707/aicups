@@ -1,6 +1,6 @@
 class BaseStrategy {
     constructor(debug) {
-        this.debug = debug;
+        this.debug = debug.log.bind(debug);
     }
 
     onTick(myPassengers, myElevators, enemyPassengers, enemyElevators) {
