@@ -65,6 +65,10 @@ namespace Api
             get { return floor; }
         }
 
+        public int Type
+        {
+            get { return type; }
+        }
 
         public List<JObject> Messages
         {
