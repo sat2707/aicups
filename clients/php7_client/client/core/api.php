@@ -38,6 +38,12 @@ class Elevator
     public $id;
 
     /**
+     * Horizontal coordinate
+     * @var double
+     */
+    public $x;
+
+    /**
      * Vertical coordinate
      * @var double
      */
@@ -80,7 +86,7 @@ class Elevator
     public $timeOnFloor;
 
     /**
-     * ???
+     * 'FIRST_PLAYER' or 'SECOND_PLAYER'
      * @var string
      */
     public $type;
@@ -103,14 +109,16 @@ class Elevator
      * @param integer $timeOnFloor
      * @param string $type
      */
-    function __construct($id, $y, $passengers, $state, $speed, $floor, $nextFloor, $timeOnFloor, $type)
+    function __construct($id, $x, $y, $passengers, $state, $speed, $floor, $nextFloor, $timeOnFloor, $type)
     {
         $this->id = $id;
 
+        $this->x = $x;
+        
         $this->y = $y;
 
         $this->passengers = array_map(function (Passenger $p) {
-            return new Passenger($p->id, $p->elevator, $p->x, $p->y, $p->state, $p->timeToAway, $p->fromFloor, $p->destFloor, $p->type, $p->floor);
+            return new Passenger($p->id, $p->elevator, $p->x, $p->y, $p->state, $p->timeToAway, $p->fromFloor, $p->destFloor, $p->type, $p->floor, $p->weight);
         }, $passengers);
 
         $this->state = $state;
@@ -187,8 +195,8 @@ class Passenger
     public $id;
 
     /**
-     * Elevator object
-     * @var Elevator
+     * Elevator identifier
+     * @var integer
      */
     public $elevator = null;
 
@@ -229,7 +237,7 @@ class Passenger
     public $destFloor;
 
     /**
-     * ???
+     * 'FIRST_PLAYER' or 'SECOND_PLAYER'
      * @var string
      */
     public $type;
@@ -239,6 +247,12 @@ class Passenger
      * @var integer
      */
     public $state;
+    
+    /**
+     * Passenger weight
+     * @var double
+     */
+    public $weight;
 
     /**
      * Current commands
@@ -246,7 +260,7 @@ class Passenger
      */
     public $messages = [];
 
-    function __construct($id, $elevator, $x, $y, $state, $timeToAway, $fromFloor, $destFloor, $type, $floor)
+    function __construct($id, $elevator, $x, $y, $state, $timeToAway, $fromFloor, $destFloor, $type, $floor, $weight)
     {
         $this->id = $id;
 
@@ -267,6 +281,8 @@ class Passenger
         $this->type = $type;
 
         $this->state = $state;
+        
+        $this->weight = $weight;
     }
 
     /**
@@ -275,7 +291,7 @@ class Passenger
      */
     public function setElevator($elevator)
     {
-        $this->elevator = $elevator;
+        $this->elevator = $elevator->id;
         $this->messages[] = [
             'command' => 'set_elevator_to_passenger',
             'args' => [
@@ -291,7 +307,7 @@ class Passenger
      */
     public function hasElevator(): bool
     {
-        return !is_null($this->elevator);
+        return !!$this->elevator;
     }
 
 }
@@ -397,7 +413,7 @@ class Api
     {
         return array_map(function ($p) {
             return new Passenger(
-                    $p->id, $p->elevator, $p->x, $p->y, $p->state, $p->time_to_away, $p->from_floor, $p->dest_floor, $p->type, $p->floor
+                    $p->id, $p->elevator, $p->x, $p->y, $p->state, $p->time_to_away, $p->from_floor, $p->dest_floor, $p->type, $p->floor, $p->weight
             );
         }, $passengers);
     }
@@ -411,7 +427,7 @@ class Api
     {
         return array_map(function ($el) {
             return new Elevator(
-                    $el->id, $el->y, $el->passengers, $el->state, $el->speed, $el->floor, $el->next_floor, $el->time_on_floor, $el->type
+                    $el->id, $el->x, $el->y, $el->passengers, $el->state, $el->speed, $el->floor, $el->next_floor, $el->time_on_floor, $el->type
             );
         }, $elevators);
     }
