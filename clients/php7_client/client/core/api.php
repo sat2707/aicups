@@ -187,10 +187,10 @@ class Passenger
     public $id;
 
     /**
-     * Elevator identifier (or null)
-     * @var integer
+     * Elevator object
+     * @var Elevator
      */
-    public $elevatorId = null;
+    public $elevator = null;
 
     /**
      * Horisontal coordinate
@@ -246,11 +246,11 @@ class Passenger
      */
     public $messages = [];
 
-    function __construct($id, $elevatorId, $x, $y, $state, $timeToAway, $fromFloor, $destFloor, $type, $floor)
+    function __construct($id, $elevator, $x, $y, $state, $timeToAway, $fromFloor, $destFloor, $type, $floor)
     {
         $this->id = $id;
 
-        $this->elevatorId = $elevatorId;
+        $this->elevator = $elevator ?: null;
 
         $this->x = $x;
 
@@ -271,16 +271,16 @@ class Passenger
 
     /**
      * Push command 'set_elevator_to_passenger'
-     * @param integer $elevatorId
+     * @param Elevator $elevator
      */
-    public function setElevator($elevatorId)
+    public function setElevator($elevator)
     {
-        $this->elevatorId = $elevatorId;
+        $this->elevator = $elevator;
         $this->messages[] = [
             'command' => 'set_elevator_to_passenger',
             'args' => [
                 'passenger_id' => $this->id,
-                'elevator_id' => $elevatorId,
+                'elevator_id' => $elevator->id,
             ],
         ];
     }
@@ -291,7 +291,7 @@ class Passenger
      */
     public function hasElevator(): bool
     {
-        return !is_null($this->elevatorId);
+        return !is_null($this->elevator);
     }
 
 }
