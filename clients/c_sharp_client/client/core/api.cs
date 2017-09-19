@@ -43,7 +43,10 @@ namespace Api
 		{ 
 			get { return speed; }
 		}
-
+        public String Type
+		{
+			get { return type; }
+		}
 
 		public int TimeOnFloor
 		{
@@ -114,6 +117,7 @@ namespace Api
 		private int dest_floor;
 		private int state;
 		private int timeToAway;
+		private float weight;
 		private String type;
 		private int floor;
 		private List<JObject> messages;
@@ -131,6 +135,11 @@ namespace Api
 		public float X
 		{
 			get { return x; }
+
+		}
+		public float Weight
+		{
+			get { return weight; }
 
 		}
 
@@ -189,6 +198,7 @@ namespace Api
 			}
 			x = (float)passenger.GetValue("x");
 			y = (float)passenger.GetValue("y");
+			weight = (float)passenger.GetValue("weight");
 
 			from_floor = (int)passenger.GetValue ("from_floor");
 			dest_floor = (int)passenger.GetValue ("dest_floor");

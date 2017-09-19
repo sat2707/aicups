@@ -20,6 +20,7 @@ public class Passenger implements MessagesInterface {
     private List<JSONObject> messages;
     private Double x;
     private Double y;
+    private Double weight;
 
     public Boolean hasElevator() {
         return this.elevator != null;
@@ -47,6 +48,14 @@ public class Passenger implements MessagesInterface {
 
     public Double getX() {
         return x;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public Integer getElevator() {
+        return elevator;
     }
 
     public Integer getId() {
@@ -78,6 +87,12 @@ public class Passenger implements MessagesInterface {
             y = ((Long) passenger.get("y")).doubleValue();
         } else {
             y = (double) passenger.get("y");
+        }
+
+        if (passenger.get("weight") instanceof Long) {
+            weight = ((Long) passenger.get("weight")).doubleValue();
+        } else {
+            weight = (double) passenger.get("weight");
         }
     }
     public void setElevator(Elevator elevator) {

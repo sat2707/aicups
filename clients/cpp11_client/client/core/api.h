@@ -77,7 +77,7 @@ public:
 class Passenger {
 public:
     int id;             // идентификатор
-    double x, y;           // координаты
+    double x, y, weight;           // координаты
     int from_floor, dest_floor; // этаж появления и цели
     int time_to_away;
     QString type;
@@ -92,6 +92,7 @@ public:
         id = json.take("id").toInt();
         x = json.take("x").toDouble();
         y = json.take("y").toDouble();
+        weight = json.take("weight").toDouble();
         from_floor = json.take("from_floor").toInt();
         dest_floor = json.take("dest_floor").toInt();
         time_to_away = json.take("time_to_away").toInt();
