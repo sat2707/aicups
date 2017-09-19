@@ -1,239 +1,477 @@
 <?php
-    // (Лифт) атрибуты только для чтения
-    class Elevator {
-        function __construct($id, $y, $passengers, $state, $speed, $floor, $next_floor, $time_on_floor, $type ) {
-            // идентификатор лифта (0, 1, 2)
-            $this->id = $id;
 
-            // координата по вертикали
-            $this->y = $y;
+/**
+ * Elevator (read-only)
+ */
+class Elevator
+{
+    
+    /**
+     * Elevator waiting between closing and moving
+     */
+    const STATE_WAITING = 0;
+    
+    /**
+     * Elevator moving to destignated floor
+     */
+    const STATE_MOVING = 1;
+    
+    /**
+     * Elevator opening the doors
+     */
+    const STATE_OPENING = 2;
+    
+    /**
+     * Elevator ready to filling passengers
+     */
+    const STATE_FILLING = 3;
+    
+    /**
+     * Elevator closing the doors
+     */
+    const STATE_CLOSING = 4;
 
-            $this->passengers = array_map(function ($p) {
-                return new Passenger(
-                    $p->id,
-                    $p->elevator,
-                    $p->x,
-                    $p->y,
-                    $p->state,
-                    $p->time_to_away,
-                    $p->from_floor,
-                    $p->dest_floor,
-                    $p->type,
-                    $p->floor);
-            }, $passengers);
+    /**
+     * Elevator identifier
+     * @var integer
+     */
+    public $id;
 
+    /**
+     * Horizontal coordinate
+     * @var double
+     */
+    public $x;
 
-            $this->state = $state;
+    /**
+     * Vertical coordinate
+     * @var double
+     */
+    public $y;
 
-            $this->speed = $speed;
+    /**
+     * Passengers inside
+     * @var Passenger[]
+     */
+    public $passengers;
 
-            $this->floor = $floor;
+    /**
+     * Elevator state
+     * @var integer
+     */
+    public $state;
 
-            $this->next_floor = $next_floor;
+    /**
+     * Current speed
+     * @var double 
+     */
+    public $speed;
 
-            $this->time_on_floor = $time_on_floor;
+    /**
+     * Current floor
+     * @var integer
+     */
+    public $floor;
 
-            $this->type = $type;
+    /**
+     * Next (destignated) floor
+     * @var integer
+     */
+    public $nextFloor;
 
-            $this->messages = array();
+    /**
+     * Ticks elevator holding on current floor
+     * @var integer
+     */
+    public $timeOnFloor;
+
+    /**
+     * 'FIRST_PLAYER' or 'SECOND_PLAYER'
+     * @var string
+     */
+    public $type;
+
+    /**
+     * Current commands
+     * @var string[]
+     */
+    public $messages = [];
+
+    /**
+     * 
+     * @param integer $id
+     * @param double $y
+     * @param Passenger[] $passengers
+     * @param integer $state
+     * @param double $speed
+     * @param integer $floor
+     * @param integer $nextFloor
+     * @param integer $timeOnFloor
+     * @param string $type
+     */
+    function __construct($id, $x, $y, $passengers, $state, $speed, $floor, $nextFloor, $timeOnFloor, $type)
+    {
+        $this->id = $id;
+
+        $this->x = $x;
+        
+        $this->y = $y;
+
+        $this->passengers = array_map(function (Passenger $p) {
+            return new Passenger($p->id, $p->elevator, $p->x, $p->y, $p->state, $p->timeToAway, $p->fromFloor, $p->destFloor, $p->type, $p->floor, $p->weight);
+        }, $passengers);
+
+        $this->state = $state;
+
+        $this->speed = $speed;
+
+        $this->floor = $floor;
+
+        $this->nextFloor = $nextFloor;
+
+        $this->timeOnFloor = $timeOnFloor;
+
+        $this->type = $type;
+    }
+
+    /**
+     * Sets command 'go_to_floor'
+     * @param integer $floor
+     */
+    public function goToFloor($floor)
+    {
+        $this->nextFloor = $floor;
+        $this->messages[] = [
+            'command' => 'go_to_floor',
+            'args' => [
+                'elevator_id' => $this->id,
+                'floor' => $floor,
+            ],
+        ];
+    }
+
+}
+
+/**
+ * Passenger (read-only)
+ */
+class Passenger
+{
+    
+    /**
+     * Passenger waiting for elevator
+     */
+    const STATE_WAITING_FOR_ELEVATOR = 1;
+    
+    /**
+     * Passenger moving to destignated elevator
+     */
+    const STATE_MOVING_TO_ELEVATOR = 2;
+    
+    /**
+     * Passenger returning to central point
+     */
+    const STATE_RETURNING = 3;
+    
+    /**
+     * Passenger moving to floor using the stairway
+     */
+    const STATE_MOVING_TO_FLOOR = 4;
+    
+    /**
+     * Passenger is in elevator
+     */
+    const STATE_USING_ELEVATOR = 5;
+    
+    /**
+     * Passenger exiting from elevator
+     */
+    const STATE_EXITING = 6;
+
+    /**
+     * Passenger identifier
+     * @var integer
+     */
+    public $id;
+
+    /**
+     * Elevator identifier
+     * @var integer
+     */
+    public $elevator = null;
+
+    /**
+     * Horisontal coordinate
+     * @var double
+     */
+    public $x;
+
+    /**
+     * Vertical coordinate
+     * @var double
+     */
+    public $y;
+
+    /**
+     * Ticks to away
+     * @var integer
+     */
+    public $timeToAway;
+
+    /**
+     * Current floor
+     * @var integer
+     */
+    public $floor;
+
+    /**
+     * Floor passenger from
+     * @var integer
+     */
+    public $fromFloor;
+
+    /**
+     * Passenger destignation floor
+     * @var integer
+     */
+    public $destFloor;
+
+    /**
+     * 'FIRST_PLAYER' or 'SECOND_PLAYER'
+     * @var string
+     */
+    public $type;
+
+    /**
+     * Passenger state
+     * @var integer
+     */
+    public $state;
+    
+    /**
+     * Passenger weight
+     * @var double
+     */
+    public $weight;
+
+    /**
+     * Current commands
+     * @var string[]
+     */
+    public $messages = [];
+
+    function __construct($id, $elevator, $x, $y, $state, $timeToAway, $fromFloor, $destFloor, $type, $floor, $weight)
+    {
+        $this->id = $id;
+
+        $this->elevator = $elevator ?: null;
+
+        $this->x = $x;
+
+        $this->y = $y;
+
+        $this->timeToAway = $timeToAway;
+
+        $this->floor = $floor;
+
+        $this->fromFloor = $fromFloor;
+
+        $this->destFloor = $destFloor;
+
+        $this->type = $type;
+
+        $this->state = $state;
+        
+        $this->weight = $weight;
+    }
+
+    /**
+     * Push command 'set_elevator_to_passenger'
+     * @param Elevator $elevator
+     */
+    public function setElevator($elevator)
+    {
+        $this->elevator = $elevator->id;
+        $this->messages[] = [
+            'command' => 'set_elevator_to_passenger',
+            'args' => [
+                'passenger_id' => $this->id,
+                'elevator_id' => $elevator->id,
+            ],
+        ];
+    }
+
+    /**
+     * Checks passenger has destignated elevator
+     * @return bool
+     */
+    public function hasElevator(): bool
+    {
+        return !!$this->elevator;
+    }
+
+}
+
+/**
+ * Debugger
+ * @property stirng[] $messages
+ */
+class Debug
+{
+
+    /**
+     *
+     * @var string[]
+     */
+    private $_messages = [];
+
+    /**
+     * Return and clear messages, or return null
+     * @param string $name
+     * @return mixed
+     */
+    function __get($name)
+    {
+        if ($name == 'messages') {
+            $messages = $this->_messages;
+            $this->_messages = [];
+            return $messages;
         }
+        return null;
+    }
 
-        public function go_to_floor($floor) {
-            $this->next_floor = $floor;
-            array_push($this->messages, array(
-                'command' => 'go_to_floor',
-                'args' => array(
-                    'elevator_id' => $this->id,
-                    'floor' => $floor
-                )
-            ));
+    /**
+     * Push command 'log'
+     * @param string $text
+     */
+    public function log($text)
+    {
+        $this->_messages[] = [
+            'command' => 'log',
+            'args' => [
+                'text' => (string) $text,
+            ],
+        ];
+    }
 
+    /**
+     * Push command 'exception'
+     * @param mixed $text
+     */
+    public function exception($text)
+    {
+        $this->_messages[] = [
+            'command' => 'exception',
+            'args' => [
+                'text' => (string) $text,
+            ],
+        ];
+    }
+
+}
+
+/**
+ * Api
+ */
+class Api
+{
+
+    /**
+     * Debugger
+     * @var Debug
+     */
+    public $debug;
+
+    /**
+     * Strategy object
+     * @var BaseStrategy
+     */
+    public $strategy;
+
+    /**
+     * 
+     */
+    function __construct()
+    {
+        $this->debug = new Debug();
+        $this->strategy = null;
+
+        try {
+            @eval("require('strategy.php');");
+            $this->strategy = new Strategy($this->debug);
+        } catch (ParseError $e) {
+            $this->debug->exception((string) $e);
         }
     }
 
-
-    // (Пассажир) атрибуты только для чтения
-    class Passenger {
-        function __construct($id, $elevator, $x, $y, $state, $time_to_away, $from_floor, $dest_floor, $type, $floor) {
-            // идентификатор пассажира
-            $this->id = $id;
-
-            // идентификатор лифта (null если нет)
-            $this->elevator = $elevator;
-
-            // координаты
-            $this->x = $x;
-            $this->y = $y;
-            $this->time_to_away = $time_to_away;
-
-            // этаж "откуда" и этаж "куда"
-            $this->floor = $floor;
-            $this->from_floor = $from_floor;
-            $this->dest_floor = $dest_floor;
-
-            $this->type = $type;
-
-            $this->state = $state;
-            $this->messages = array();
-        }
-
-        // назначить пассажиру лифт
-        public function set_elevator($elevator) {
-            $this->elevator = $elevator;
-            array_push($this->messages, array(
-                'command' => 'set_elevator_to_passenger',
-                'args' => array(
-                    'passenger_id' => $this->id,
-                    'elevator_id' => $elevator->id,
-                )
-            ));
-        }
-
-        // проверить, есть ли лифт у пассажира
-        public function has_elevator() : bool {
-            if ($this->elevator !== '' && $this->elevator !== null) {
-                return true;
-            }
-            return false;
-        }
-
+    /**
+     * Convert array of json-objects to array of Passenger objects
+     * @param array $passengers
+     * @return type
+     */
+    private function parsePassengers(array $passengers)
+    {
+        return array_map(function ($p) {
+            return new Passenger(
+                    $p->id, $p->elevator, $p->x, $p->y, $p->state, $p->time_to_away, $p->from_floor, $p->dest_floor, $p->type, $p->floor, $p->weight
+            );
+        }, $passengers);
     }
 
-
-    class Debug {
-        private  $_messages = array();
-
-        function __get($name) {
-            if ($name == 'messages') {
-                $messages = $this->_messages;
-                $this->_messages = array();
-                return $messages;
-            }
-            return null;
-        }
-
-        // Отладка в консоль
-        public function log($text) {
-            array_push($this->_messages, array(
-                'command' => 'log',
-                'args' => array(
-                    'text' => (string) $text,
-                )
-            ));
-        }
-
-        public function exception ($text) {
-            array_push($this->_messages, array(
-                'command' => 'exception',
-                'args' => array(
-                    'text' => urlencode((string) $text),
-                )
-            ));
-        }
+    /**
+     * Convert array of json-objects to array of Elevator objects
+     * @param stdClass[] $elevators
+     * @return Elevator[]
+     */
+    private function parseElevators(array $elevators)
+    {
+        return array_map(function ($el) {
+            return new Elevator(
+                    $el->id, $el->x, $el->y, $el->passengers, $el->state, $el->speed, $el->floor, $el->next_floor, $el->time_on_floor, $el->type
+            );
+        }, $elevators);
     }
 
-
-    class Api {
-        function __construct() {
-
-            $this->debug = new Debug();
-            $this->strategy = null;
-
-            try {
-                @eval("require('strategy.php');");
-                $this->strategy = new Strategy($this->debug);
-            } catch (ParseError $e) {
-                $this->debug->exception((string) $e);
-            }
-        }
-
-        public function parse_state($state) {
-            $my_passengers = $state->my_passengers;
-            $my_passengers = array_map(function ($p) {
-                return new Passenger(
-                    $p->id,
-                    $p->elevator,
-                    $p->x,
-                    $p->y,
-                    $p->state,
-                    $p->time_to_away,
-                    $p->from_floor,
-                    $p->dest_floor,
-                    $p->type,
-                    $p->floor
-                );
-            }, $my_passengers);
-
-            $my_elevators = $state->my_elevators;
-            $my_elevators = array_map(function ($el) {
-                return new Elevator(
-                    $el->id,
-                    $el->y,
-                    $el->passengers,
-                    $el->state,
-                    $el->speed,
-                    $el->floor,
-                    $el->next_floor,
-                    $el->time_on_floor,
-                    $el->type
-                );
-            }, $my_elevators);
-
-            $enemy_passengers = $state->enemy_passengers;
-            $enemy_passengers = array_map(function ($p) {
-                return new Passenger(
-                    $p->id,
-                    $p->elevator,
-                    $p->x,
-                    $p->y,
-                    $p->state,
-                    $p->time_to_away,
-                    $p->from_floor,
-                    $p->dest_floor,
-                    $p->type,
-                    $p->floor
-                );
-            }, $enemy_passengers);
-
-            $enemy_elevators = $state->enemy_elevators;
-            $enemy_elevators = array_map(function ($el) {
-                return new Elevator(
-                    $el->id,
-                    $el->y,
-                    $el->passengers,
-                    $el->state,
-                    $el->speed,
-                    $el->floor,
-                    $el->next_floor,
-                    $el->time_on_floor,
-                    $el->type
-                );
-            }, $enemy_elevators);
-
-            return array("my_passengers" => $my_passengers,
-                         "my_elevators" => $my_elevators,
-                         "enemy_passengers" => $enemy_passengers,
-                         "enemy_elevators" => $enemy_elevators);
-        }
-
-        public function turn($state) {
-            $data = $this->parse_state($state);
-            try {
-                if ($this->strategy) {
-                    @eval('$this->strategy->on_tick($data["my_passengers"], $data["my_elevators"], $data["enemy_passengers"], $data["enemy_elevators"]);');
-                }
-            } catch (Error $e) {
-                $this->debug->exception((string) $e);
-            }
-            $temp_result = array_map(function($item) {
-                return $item->messages;
-            }, array_merge($data["my_passengers"], $data["my_elevators"], $data["enemy_passengers"], array($this->debug)));
-
-            $result = array();
-            foreach ($temp_result as $tmp) {
-                $result = array_merge($result, $tmp);
-            }
-            return $result;
-        }
+    /**
+     * Parse json-object and create objects of Passenger and Elevator
+     * @param stdClass $state
+     * @return array ['myPassengers' => Passenger[], 'myElevators' => Elevator[], 'enemyPassengers' => Passenger[], 'enemyElevators' => Elevator[]]
+     */
+    private function parseState(stdClass $state)
+    {
+        return [
+            "myPassengers" => $this->parsePassengers($state->my_passengers),
+            "myElevators" => $this->parseElevators($state->my_elevators),
+            "enemyPassengers" => $this->parsePassengers($state->enemy_passengers),
+            "enemyElevators" => $this->parseElevators($state->enemy_elevators),
+        ];
     }
-?>
+
+    /**
+     * Process strategy turn
+     * @param stdClass $state world state
+     * @return string[] messages generated by strategy
+     */
+    public function turn(stdClass $state)
+    {
+        $data = $this->parseState($state);
+        try {
+            if ($this->strategy) {
+                @eval('$this->strategy->onTick($data["myPassengers"], $data["myElevators"], $data["enemyPassengers"], $data["enemyElevators"]);');
+            }
+        } catch (Error $e) {
+            $this->debug->exception((string) $e);
+        }
+
+        $tempResult = array_map(function($item) {
+            return $item->messages;
+        }, array_merge($data["myPassengers"], $data["myElevators"], $data["enemyPassengers"], array($this->debug)));
+
+        $result = [];
+        foreach ($tempResult as $tmp) {
+            $result = array_merge($result, $tmp);
+        }
+        return $result;
+    }
+
+}
