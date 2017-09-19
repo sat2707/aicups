@@ -132,6 +132,8 @@ private:
     QString toString(double smth) { return QString::number(smth); }
 
     QString toString(char smth) { return QString(smth); }
+    QString toString(const std::string &smth) { return QString::fromStdString(smth); }
+    QString toString(const char *smth) { return QString(smth); }
     QString toString(QString smth) { return QString(smth); }
     QString toString(Passenger& smth) { return "Passenger id=" + toString(smth.id); }
     QString toString(Elevator& smth) { return "Elevator id=" + toString(smth.id); }
