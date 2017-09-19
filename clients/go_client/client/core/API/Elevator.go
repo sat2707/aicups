@@ -6,7 +6,7 @@ type Elevator struct {
 	mState       int
 	mType        string
 	mFloor       int
-	mY           int
+	mY           float64
 	mPassengers  []*Passenger
 	mSpeed       float64
 	mTimeOnFloor int
@@ -29,7 +29,7 @@ func (e *Elevator) Floor() int {
 	return e.mFloor
 }
 
-func (e *Elevator) Y() int {
+func (e *Elevator) Y() float64 {
 	return e.mY
 }
 
@@ -80,7 +80,7 @@ func NewElevator(JSONObj map[string]interface{}) *Elevator {
 	e.mFloor = int(floor.(float64))
 
 	y, _ := JSONObj["y"]
-	e.mY = int(y.(float64))
+	e.mY = y.(float64)
 
 	passengers, _ := JSONObj["passengers"]
 
