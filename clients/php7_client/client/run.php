@@ -8,10 +8,11 @@ $port = 8000;
 /**
  * Client class
  */
-class Client {
-    
+class Client
+{
+
     /**
-     *
+     * Solution identifier
      * @var integer
      */
     public $solutionId;
@@ -20,7 +21,8 @@ class Client {
      * 
      * @param integer $solutionId
      */
-    function __construct($solutionId) {
+    function __construct($solutionId)
+    {
         $this->solutionId = $solutionId;
         $this->sock = NULL;
     }
@@ -30,7 +32,8 @@ class Client {
      * @param string $host
      * @param integer $port
      */
-    public function connect($host, $port) {
+    public function connect($host, $port)
+    {
         $adress = $host . ":" . $port;
         $this->sock = stream_socket_client("tcp://" . $adress, $errno, $errstr, $flags = STREAM_CLIENT_ASYNC_CONNECT | STREAM_CLIENT_CONNECT);
         stream_set_blocking($this->sock, false);
@@ -62,8 +65,8 @@ class Client {
      * @param array $message
      * @return string
      */
-    private static function dumpMessage($message) {
-
+    private static function dumpMessage($message)
+    {
         $result = json_encode($message) . "\n";
         return $result;
     }
@@ -71,7 +74,8 @@ class Client {
     /**
      * Main loop
      */
-    private function strategyLoop() {
+    private function strategyLoop()
+    {
         $api = new Api();
         $data = '';
         $read = [$this->sock];
@@ -106,7 +110,8 @@ class Client {
      * @param array $message
      * @return integer
      */
-    public function sendMessage($message) {
+    public function sendMessage($message)
+    {
         $msg = $this->dumpMessage($message);
         return fwrite($this->sock, $msg);
     }

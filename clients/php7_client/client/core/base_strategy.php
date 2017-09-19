@@ -1,9 +1,13 @@
 <?php
 
-class BaseStrategy {
+/**
+ * Base strategy class
+ */
+class BaseStrategy
+{
 
     /**
-     * Debugger
+     * Debugger object
      * @var Debug 
      */
     protected $_debug;
@@ -12,7 +16,8 @@ class BaseStrategy {
      * 
      * @param Debug $debug
      */
-    function __construct($debug) {
+    function __construct($debug)
+    {
         $this->_debug = $debug;
     }
 
@@ -20,7 +25,8 @@ class BaseStrategy {
      * Push log message
      * @param string $text
      */
-    protected function log($text) {
+    protected function log($text)
+    {
         $this->debug->log($text);
     }
     
@@ -31,7 +37,8 @@ class BaseStrategy {
      * @param Passenger[] $enemyPassengers
      * @param Elevator[] $enemyElevators
      */
-    function onTick(&$myPassengers, &$myElevators, &$enemyPassengers, &$enemyElevators) {
+    function onTick(&$myPassengers, &$myElevators, &$enemyPassengers, &$enemyElevators)
+    {
         return;
     }
 }
