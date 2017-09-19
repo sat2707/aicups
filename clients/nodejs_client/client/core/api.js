@@ -2,9 +2,7 @@ class Elevator {
     constructor({id, y, passengers, state, speed, floor, next_floor, time_on_floor, type}) {
         this.id = id;
         this._y = y;
-        this._passengers = passengers.map((passenger) => {
-            return new Passenger(passenger);
-        });
+        this._passengers = passengers; //оставлять списком id, иначе заполнялось неинициализированными пассажирами
         this._state = state;
         this._speed = speed;
         this._floor = floor;
