@@ -1,5 +1,5 @@
 class Elevator {
-    constructor({id, y, passengers, state, speed, floor, nextFloor, timeOnFloor, type}) {
+    constructor({id, y, passengers, state, speed, floor, next_floor, time_on_floor, type}) {
         this.id = id;
         this._y = y;
         this._passengers = passengers.map((passenger) => {
@@ -8,8 +8,8 @@ class Elevator {
         this._state = state;
         this._speed = speed;
         this._floor = floor;
-        this._nextFloor = nextFloor;
-        this._timeOnFloor = timeOnFloor;
+        this._nextFloor = next_floor;
+        this._timeOnFloor = time_on_floor;
         this._type = type;
         this._messages = [];
     }
@@ -66,12 +66,12 @@ class Elevator {
 }
 
 class Passenger {
-    constructor({id, elevator, x, y, state, timeToAway, fromFloor, destFloor, type, floor}) {
+    constructor({id, elevator, x, y, state, time_to_away, from_floor, dest_floor, type, floor}) {
         this.id = id;
         this._elevator = elevator;
-        this._fromFloor = fromFloor;
-        this._destFloor = destFloor;
-        this._timeToAway = timeToAway;
+        this._fromFloor = from_floor;
+        this._destFloor = dest_floor;
+        this._timeToAway = time_to_away;
         this._state = state;
         this._floor = floor;
         this._type = type;
