@@ -50,7 +50,7 @@ public class Elevator implements MessagesInterface {
         return this.passengers;
     }
 
-    Integer getId() {
+    public Integer getId() {
         return this.id;
     }
 
