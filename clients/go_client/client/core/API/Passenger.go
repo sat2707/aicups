@@ -6,12 +6,13 @@ type Passenger struct {
 	mState      int
 	mType       string
 	mFloor      int
-	mX          int
-	mY          int
+	mX          float64
+	mY          float64
 	mElevator   int
 	mFromFloor  int
 	mDestFloor  int
 	mTimeToAway int
+	mWeight     float64
 }
 
 func (p *Passenger) ID() int {
@@ -30,11 +31,11 @@ func (p *Passenger) Floor() int {
 	return p.mFloor
 }
 
-func (p *Passenger) X() int {
+func (p *Passenger) X() float64 {
 	return p.mX
 }
 
-func (p *Passenger) Y() int {
+func (p *Passenger) Y() float64 {
 	return p.mY
 }
 
@@ -52,6 +53,10 @@ func (p *Passenger) DestFloor() int {
 
 func (p *Passenger) TimeToAway() int {
 	return p.mTimeToAway
+}
+
+func (p *Passenger) Weight() float64 {
+	return p.mWeight
 }
 
 func (p *Passenger) SetElevator(elevator *Elevator) {
@@ -84,10 +89,10 @@ func NewPassenger(JSONObj map[string]interface{}) *Passenger {
 	p.mFloor = int(floor.(float64))
 
 	x, _ := JSONObj["x"]
-	p.mX = int(x.(float64))
+	p.mX = x.(float64)
 
 	y, _ := JSONObj["y"]
-	p.mY = int(y.(float64))
+	p.mY = y.(float64)
 
 	elevator, ok := JSONObj["elevator"]
 	if !ok || elevator == nil {
@@ -104,6 +109,9 @@ func NewPassenger(JSONObj map[string]interface{}) *Passenger {
 
 	timeToAway, _ := JSONObj["time_to_away"]
 	p.mTimeToAway = int(timeToAway.(float64))
+
+	weight, _ := JSONObj["weight"]
+	p.mWeight = weight.(float64)
 
 	return p
 }
