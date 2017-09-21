@@ -193,8 +193,8 @@ namespace Api
 			{
 			    elevator = (int)jToken;
 			}
-            else
-            { 
+			else
+			{ 
 				elevator = -1;
 			}
 			
@@ -300,10 +300,10 @@ namespace Api
 		private Tuple<List<Passenger>, List<Elevator>, List<Passenger>, List<Elevator>> parseState (JObject state)
 		{
 			List<Passenger> myPassengers = Helpers.ParsePassengers(state, "my_passengers");
-            List<Elevator> myElevators = Helpers.ParseElevators(state, "my_elevators");
+			List<Elevator> myElevators = Helpers.ParseElevators(state, "my_elevators");
 
-            List<Passenger> enemyPassengers = Helpers.ParsePassengers(state, "enemy_passengers");
-            List<Elevator> enemyElevators = Helpers.ParseElevators(state, "enemy_elevators");
+			List<Passenger> enemyPassengers = Helpers.ParsePassengers(state, "enemy_passengers");
+			List<Elevator> enemyElevators = Helpers.ParseElevators(state, "enemy_elevators");
 
 
 			return new Tuple<List<Passenger>, List<Elevator>, List<Passenger>, List<Elevator>>(myPassengers, myElevators, enemyPassengers, enemyElevators);
@@ -341,34 +341,34 @@ namespace Api
 	}
 	
 	static class Helpers
-    {
-        public static List<Passenger> ParsePassengers(JObject jObject, string propertyName)
-        {
-            var values = (JArray)jObject.GetValue(propertyName);
+	{
+		public static List<Passenger> ParsePassengers(JObject jObject, string propertyName)
+		{
+			var values = (JArray)jObject.GetValue(propertyName);
 
-            List<Passenger> passengers = new List<Passenger>(values.Count);
+			List<Passenger> passengers = new List<Passenger>(values.Count);
 
-            foreach (JObject passenger in values)
-            {
-                passengers.Add(new Passenger(passenger));
-            }
+			foreach (JObject passenger in values)
+			{
+				passengers.Add(new Passenger(passenger));
+			}
 
-            return passengers;
+			return passengers;
         }
 
-        public static List<Elevator> ParseElevators(JObject jObject, string propertyName)
-        {
-            var values = (JArray)jObject.GetValue(propertyName);
+		public static List<Elevator> ParseElevators(JObject jObject, string propertyName)
+		{
+			var values = (JArray)jObject.GetValue(propertyName);
 
-            List<Elevator> elevators = new List<Elevator>(values.Count);
+			List<Elevator> elevators = new List<Elevator>(values.Count);
 
-            foreach (JObject elevator in values)
-            {
-                elevators.Add(new Elevator(elevator));
-            }
+			foreach (JObject elevator in values)
+			{
+				elevators.Add(new Elevator(elevator));
+			}
 
-            return elevators;
+			return elevators;
         }
-    }
+	}
 }
 
