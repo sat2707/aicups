@@ -17,7 +17,7 @@ public class Debug implements MessagesInterface {
 
     public void log(Object object) {
         JSONObject jo = new JSONObject();
-        jo.put("action", "log");
+        jo.put("command", "log");
         JSONObject args = new JSONObject();
         args.put("text", object.toString());
         jo.put("args", args);
@@ -26,7 +26,7 @@ public class Debug implements MessagesInterface {
 
     public void exception(Object object) {
         JSONObject jo = new JSONObject();
-        jo.put("action", "exception");
+        jo.put("command", "exception");
         JSONObject args = new JSONObject();
         args.put("text", object.toString());
         jo.put("args", args);

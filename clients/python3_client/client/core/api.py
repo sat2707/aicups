@@ -25,7 +25,7 @@ class Elevator:
 
 # (Пассажир) атрибуты только для чтения
 class Passenger:
-    def __init__(self, add_action, id: int, elevator, x: float, y: float, state: int, time_to_away: int, from_floor: int, dest_floor: int, type: str, floor: float):
+    def __init__(self, add_action, id: int, elevator, x: float, y: float, state: int, time_to_away: int, from_floor: int, dest_floor: int, type: str, floor: float, weight: float):
         self.add_action = add_action
         self.id = id
         self.elevator = elevator
@@ -38,6 +38,7 @@ class Passenger:
         self.y = y
         self.type = type
         self.floor = floor
+        self.weight = weight
 
     # проверить, назначен ли лифт
     def has_elevator(self):

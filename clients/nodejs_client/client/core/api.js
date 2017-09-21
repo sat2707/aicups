@@ -66,7 +66,7 @@ class Elevator {
 }
 
 class Passenger {
-    constructor({id, elevator, x, y, state, time_to_away, from_floor, dest_floor, type, floor}) {
+    constructor({id, elevator, x, y, state, time_to_away, from_floor, dest_floor, type, floor, weight}) {
         this.id = id;
         this._elevator = elevator;
         this._fromFloor = from_floor;
@@ -78,6 +78,11 @@ class Passenger {
         this._messages = [];
         this._x = x;
         this._y = y;
+        this._weight = weight
+    }
+
+    get weight() {
+        return this._weight;
     }
 
     get elevator() {
