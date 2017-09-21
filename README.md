@@ -3,4 +3,6 @@
 
 ## CodeLift, первый тестовый чемпионат
 
-### [Описание мира](/world.md/)
+### [Описание мира](/world.md)
+
+### [LocalRunner](/localrunner/README.md)
