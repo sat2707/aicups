@@ -19,7 +19,7 @@ class Client:
         }, writer)
 
         data = await reader.readuntil(b'\n')
-        data = json.loads(data)
+        data = json.loads(data.decode())
         grant = data.get('message') == 'beginning'
         return grant, reader
 
@@ -33,7 +33,7 @@ class Client:
         grant, reader = await self.ask_for_grant(reader, writer)
         while grant:
             data = await reader.readuntil(b'\n')
-            data = json.loads(data)
+            data = json.loads(data.decode())
 
             if data.get('message') == 'down':
                 break
