@@ -9,6 +9,6 @@
 
 ### [LocalRunner](/localrunner/README.md)
 
-### [Клиенты](/clients/)
+### [API](/clients/)
 
 ### [Базовые стратегии](/baseline/)
