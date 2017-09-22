@@ -144,14 +144,18 @@ class WorldHandler(object):
         self.blue_client.send({'message': 'beginning', 'color': 'SECOND_PLAYER'})
 
         for _ in range(0, self.ticks_count):
-            blue_message = []
             if not self.blue_client.is_close:
                 self.blue_client.send(self.api.get_world_state_for(self.blue_client))
+
+            if not self.red_client.is_close:
+                self.red_client.send(self.api.get_world_state_for(self.red_client))
+
+            blue_message = []
+            if not self.blue_client.is_close:
                 blue_message = yield self.blue_client.read_messages()
 
             red_message = []
             if not self.red_client.is_close:
-                self.red_client.send(self.api.get_world_state_for(self.red_client))
                 red_message = yield self.red_client.read_messages()
 
             self.api.apply_commands(blue_message, self.blue_client)
