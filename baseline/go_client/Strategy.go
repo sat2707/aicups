@@ -15,8 +15,6 @@ func (s *Strategy) Init(){
 
 func (s *Strategy) OnTick(myPassengers []*API.Passenger, myElevators []*API.Elevator,
 				enemyPassengers []*API.Passenger, enemyElevators []*API.Elevator) error {
-	myPassengers[0].SetElevator(myElevators[0])
-	myPassengers[1].SetElevator(myElevators[0])
 
 	for i := 0; i < len(myElevators); i++ {
 		elevator := myElevators[i]

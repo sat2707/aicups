@@ -28,6 +28,23 @@ func main() {
 	loop(host, 8000, solutionId)
 }
 
+func getMessage(reader *bufio.Reader, jsonObject *interface{}) error{
+	message, err := reader.ReadBytes('\n')
+
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(message, &jsonObject)
+
+	if err != nil || jsonObject == nil {
+		log.Fatalf("JSON parse error: %s", err)
+		return err
+	}
+
+	return nil
+}
+
 func loop(host string, port int, solutionId string) {
 	var jsonPool = sync.Pool{}
 
@@ -42,7 +59,7 @@ func loop(host string, port int, solutionId string) {
 
 	reader := bufio.NewReader(conn)
 
-	_, err = fmt.Fprintf(conn, `{"solution_id":"%s"}`, solutionId)
+	_, err = fmt.Fprintf(conn, `{"solution_id":"%s"}` + "\n", solutionId)
 
 	if err != nil {
 		log.Fatal("Can not send solution_id")
@@ -55,15 +72,7 @@ func loop(host string, port int, solutionId string) {
 
 		jsonObject := jsonPool.Get()
 
-		message, _ := reader.ReadBytes('\n')
-
-		if err != nil {
-			break
-		}
-
-		err = json.Unmarshal(message, &jsonObject)
-
-		if err != nil || jsonObject == nil {
+		if err := getMessage(reader , &jsonObject); err != nil{
 			log.Fatalf("JSON parse error: %s", err)
 			break
 		}
@@ -73,6 +82,10 @@ func loop(host string, port int, solutionId string) {
 				log.Println("Parsed down")
 				break
 			}
+			if err := getMessage(reader , &jsonObject); err != nil{
+				log.Fatalf("JSON parse error: %s", err)
+				break
+			}
 		}
 
 		jsonArray := api.Turn(jsonObject.(map[string]interface{}))
@@ -80,6 +93,7 @@ func loop(host string, port int, solutionId string) {
 		res, _ := json.Marshal(jsonArray)
 
 		conn.Write(res)
+		conn.Write([]byte("\n"))
 
 		jsonPool.Put(jsonObject)
 	}
