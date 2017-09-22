@@ -21,6 +21,7 @@ void fill_passenger(Passenger &passenger, const JSON &jpassenger)
     passenger.id = jpassenger["id"];
     passenger.x = jpassenger["x"];
     passenger.y = jpassenger["y"];
+    passenger.weight = jpassenger["weight"];
     passenger.from_floor = jpassenger["from_floor"];
     passenger.dest_floor = jpassenger["dest_floor"];
     passenger.time_to_away = jpassenger["time_to_away"];
@@ -119,6 +120,12 @@ public:
         {
             auto cmd = json::parse(line);
 
+            if (cmd.count("message") && cmd["message"] == std::string("down"))
+            {
+                std::cout << "Down" << std::endl;
+                return false;
+            }
+
             if (!started)
             {
                 if (cmd["message"] != std::string("beginning"))
@@ -131,9 +138,6 @@ public:
                 strategy.reset(new Strategy());
                 return true;
             }
-
-            if (cmd.count("message") && cmd["message"] == std::string("down"))
-                return false;
 
             std::vector<Elevator> my_elevators;
             std::vector<Elevator> enemy_elevators;
@@ -241,12 +245,12 @@ private:
 
     void log_commands(BaseStrategy &base_strategy)
     {
-        for (std::pair<bool, std::string> &log : base_strategy.logs)
+        for (std::pair<bool, std::stringstream> &log : base_strategy.logs)
         {
             json obj = {
                 {"command", log.first ? "exception" : "log"},
                 {   "args", {
-                        {"text", log.second}
+                        {"text", log.second.str()}
                     }
                 }
             };

@@ -9,23 +9,20 @@
 class BaseStrategy
 {
 private:
-    std::vector<std::pair<bool/*is exception*/, std::string>> logs;
+    std::vector<std::pair<bool/*is exception*/, std::stringstream>> logs;
     friend class Client;
 public:
-    template <typename T>
-    void log(T &&smth)
+
+    std::stringstream &log()
     {
-        std::stringstream oss;
-        oss << smth;
-        logs.push_back(std::make_pair(false, oss.str()));
+        logs.push_back(std::make_pair(false, std::stringstream()));
+        return logs.rbegin()->second;
     }
 
-    template <typename T>
-    void exception(T &&smth)
+    std::stringstream & exception()
     {
-        std::stringstream oss;
-        oss << smth;
-        logs.push_back(std::make_pair(true, oss.str()));
+        logs.push_back(std::make_pair(true, std::stringstream()));
+        return logs.rbegin()->second;
     }
 };
 

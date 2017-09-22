@@ -1,4 +1,17 @@
 #include "strategy.h"
+#include <iostream>
+
+std::ostream & operator << (std::ostream &s, const Elevator &e)
+{
+	s << "Elevator(id=" << e.id << ")";
+	return s;
+}
+
+std::ostream & operator << (std::ostream &s, const Passenger &p)
+{
+	s << "Passenger(id=" << p.id << ")";
+	return s;
+}
 
 void Strategy::on_tick(const std::vector<Elevator>& myElevators,
                        const std::vector<Passenger>& myPassengers,
@@ -27,6 +40,6 @@ void Strategy::on_tick(const std::vector<Elevator>& myElevators,
         }
     }
 
-    log("Hello!");
+    log() << "Hello " << myElevators[0];
 }
 

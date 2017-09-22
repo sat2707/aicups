@@ -10,6 +10,7 @@ class Passenger {
 public:
     int id;             // идентификатор
     double x, y;           // координаты
+    double weight;
     int from_floor, dest_floor; // этаж появления и цели
     int time_to_away;
     std::string type;
