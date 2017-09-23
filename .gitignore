@@ -1,3 +1,4 @@
 .idea/*
 *.pyc
 .DS_Store
+localrunner/visualizer/game.js

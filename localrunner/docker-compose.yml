@@ -1,0 +1,8 @@
+aicups-codelift-localrunner:
+  build: .
+  dockerfile: Dockerfile
+  container_name: aicups-codelift-localrunner
+  ports:
+    - 8000:8000
+  volumes:
+    - ./:/usr/src/app
