@@ -10,6 +10,8 @@ protocol ProvideMessages {
   var messages:[Message] {get}
 }
 
+
+
 class SetElevator:Message {
   struct Arguments:Encodable {
     let passengerId: Int
@@ -119,6 +121,19 @@ struct FirstMessage: Codable {
 }
 
 struct WorldState:Codable {
+  
+  class DecodeContext{
+    static let key = CodingUserInfoKey(rawValue: "elevators")!
+    private(set) var elevators: [Int:Elevator]!
+    func set(elevators:[Elevator]) {
+      self.elevators = elevators.reduce(Dictionary<Int,Elevator>()) {dict, element in
+        var dict = dict
+        dict[element.id] = element
+        return dict
+      }
+    }
+  }
+  
   let myElevators:[Elevator]
   let myPassenger:[Passenger]
   let enemyElevators:[Elevator]
@@ -129,6 +144,21 @@ struct WorldState:Codable {
     case myPassenger = "my_passengers"
     case enemyElevators = "enemy_elevators"
     case enemyPassenger = "enemy_passengers"
+  }
+  
+  public init(from decoder: Decoder) throws
+  {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    myElevators = try container.decode([Elevator].self, forKey: .myElevators)
+    enemyElevators = try container.decode([Elevator].self, forKey: .enemyElevators)
+    
+    if let context = decoder.userInfo[DecodeContext.key] as? DecodeContext
+    {
+      context.set(elevators: myElevators+enemyElevators)
+    }
+
+    myPassenger = try container.decode([Passenger].self, forKey: .myPassenger)
+    enemyPassenger = try container.decode([Passenger].self, forKey: .enemyPassenger)
   }
 }
 
@@ -147,7 +177,7 @@ class Passenger:Codable,ProvideMessages {
   let x:Int
   let y:Float
   let type:String
-  private(set) var elevator: Int = -1
+  private(set) var elevator: Elevator? = nil
   
   internal var messages = [Message]()
   
@@ -174,19 +204,41 @@ class Passenger:Codable,ProvideMessages {
   }
   
   enum CodingKeys: String, CodingKey {
-    case weight,state,y,floor,type,id,x
+    case weight,state,y,floor,type,id,x,elevator
     case destFloor = "dest_floor"
     case fromFloor = "from_floor"
     case timeToAway = "time_to_away"
+    
+  }
+  
+  public required init(from decoder: Decoder) throws
+  {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.id = try container.decode(Int.self, forKey: .id)
+    self.destFloor = try container.decode(Int.self, forKey: .destFloor)
+    self.weight = try container.decode(Float.self, forKey: .weight)
+    self.fromFloor = try container.decode(Int.self, forKey: .fromFloor)
+    self.floor = try container.decode(Int.self, forKey: .floor)
+    self.timeToAway = try container.decode(Int.self, forKey: .timeToAway)
+    self.state = try container.decode(State.self, forKey: .state)
+    self.x = try container.decode(Int.self, forKey: .x)
+    self.y = try container.decode(Float.self, forKey: .y)
+    self.type = try container.decode(String.self, forKey: .type)
+    
+    
+    if let elevatorId = try? container.decode(Int.self, forKey: .elevator), let context = decoder.userInfo[WorldState.DecodeContext.key] as? WorldState.DecodeContext
+    {
+      self.elevator = context.elevators[elevatorId]
+    }
   }
   
   func set(elevator: Elevator) {
-    self.elevator = elevator.id;
+    self.elevator = elevator;
     self.messages.append(SetElevator(elevatorId: elevator.id, passengerId: self.id))
   }
   
   func hasElevator() -> Bool {
-    return self.elevator != -1;
+    return self.elevator != nil;
   }
   
   

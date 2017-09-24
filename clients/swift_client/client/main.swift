@@ -3,16 +3,17 @@ import Foundation
 class Client {
   let socket:Socket
   let solutionID: Int
-  let strategy: BaseStrategy
+  var strategy: BaseStrategy!
   let debug = DebugLog()
   init(host:String, port: Int, solutionID: Int) {
     socket = Socket(host: host, port: port)
     self.solutionID = solutionID
-    strategy = Strategy(debug: debug)
+    
   }
   
   func run()  {
     let decoder = JSONDecoder()
+    decoder.userInfo[WorldState.DecodeContext.key] = WorldState.DecodeContext()
     let encoder = JSONEncoder()
     try! socket.connect()
     socket.write(data: "{\"solution_id\":  \(solutionID)}\n".data(using: .utf8)!)
@@ -23,8 +24,8 @@ class Client {
       
     }
     
-    let _ = try! decoder.decode(FirstMessage.self, from: data)
-
+    let first = try! decoder.decode(FirstMessage.self, from: data)
+    strategy = Strategy(debug: debug,type: first.color)
     while true{
       guard let data = socket.readLine() else {
         print("Can't read data")
@@ -36,7 +37,7 @@ class Client {
         
         
         var messagesToSend = [Message]()
-        var objects:[ProvideMessages] = state.myElevators+state.enemyElevators
+        var objects:[ProvideMessages] = state.myElevators as [ProvideMessages] + state.myPassenger as [ProvideMessages]
         objects.append(debug)
         for sendObject in objects
         {
@@ -46,6 +47,7 @@ class Client {
         
         var sendData = try! encoder.encode(messagesToSend)
         sendData.append("\n".data(using: .utf8)!)
+        
         socket.write(data: sendData)
       }catch {
         if let message = try? decoder.decode([String:String].self, from: data), let text = message["message"]
@@ -54,6 +56,8 @@ class Client {
         }else{
           print("\(error)")
         }
+        
+        break;
       }
     }
   }
