@@ -30,7 +30,7 @@ class Elevator(object):
 
 
 class Passenger(object):
-    def __init__(self, id, elevator, x, y, state, time_to_away, from_floor, dest_floor, type, floor):
+    def __init__(self, id, elevator, x, y, state, time_to_away, from_floor, dest_floor, type, floor, weight):
         self.id = id
         self.elevator = elevator
         self.from_floor = from_floor
@@ -42,6 +42,7 @@ class Passenger(object):
         self.y = y
         self.type = type
         self.floor = floor
+        self.weight = weight
 
     def set_elevator(self, elevator):
         self.elevator = elevator

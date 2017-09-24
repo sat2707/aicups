@@ -19,7 +19,8 @@
                     $p->from_floor,
                     $p->dest_floor,
                     $p->type,
-                    $p->floor);
+                    $p->floor,
+                    $p->weight);
             }, $passengers);
 
 
@@ -54,7 +55,7 @@
 
     // (Пассажир) атрибуты только для чтения
     class Passenger {
-        function __construct($id, $elevator, $x, $y, $state, $time_to_away, $from_floor, $dest_floor, $type, $floor) {
+        function __construct($id, $elevator, $x, $y, $state, $time_to_away, $from_floor, $dest_floor, $type, $floor, $weight) {
             // идентификатор пассажира
             $this->id = $id;
 
@@ -74,6 +75,7 @@
             $this->type = $type;
 
             $this->state = $state;
+            $this->weight = $weight;
             $this->messages = array();
         }
 
@@ -160,7 +162,8 @@
                     $p->from_floor,
                     $p->dest_floor,
                     $p->type,
-                    $p->floor
+                    $p->floor,
+                    $p->weight
                 );
             }, $my_passengers);
 

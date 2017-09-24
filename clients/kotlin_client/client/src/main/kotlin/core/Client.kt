@@ -15,11 +15,11 @@ class Client(private val host: String, private val port: Int, private val soluti
   private val parser = JSONParser()
   private var clientSocket: SocketChannel? = null
 
-  private fun parseString(jsonString: String?): JSONObject? {
+  private fun parseString(jsonString: String): JSONObject? {
     if (jsonString == null) {
       return null
     }
-
+    
     return try {
       parser.parse(jsonString) as JSONObject
     } catch (e: ParseException) {
