@@ -19,7 +19,7 @@ class Client(private val host: String, private val port: Int, private val soluti
     if (jsonString == null) {
       return null
     }
-    
+
     return try {
       parser.parse(jsonString) as JSONObject
     } catch (e: ParseException) {
