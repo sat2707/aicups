@@ -27,7 +27,10 @@ void fill_passenger(Passenger &passenger, const JSON &jpassenger)
     passenger.time_to_away = jpassenger["time_to_away"];
     passenger.type = jpassenger["type"];
     passenger.floor = jpassenger["floor"];
-    passenger.elevator = jpassenger["elevator"].is_null() ? -1 : jpassenger["elevator"].is_null();
+    if (jpassenger["elevator"].is_null())
+        passenger.elevator = - 1;
+    else
+        passenger.elevator = jpassenger["elevator"];
     passenger.state = jpassenger["state"];
 }
 
