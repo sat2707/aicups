@@ -30,7 +30,6 @@ define(['PIXI', 'conf', 'underscore'], function (PIXI, conf, _) {
         loadFromConf(conf.OPTIONS_PASSENGER[2].WALK_ANIMATION);
         loadFromConf(conf.OPTIONS_PASSENGER[2].RIDE_ANIMATION);
 
-        loadFromConf(conf.OPTIONS_DOOR.OPEN_ANIMATION);
 
         loader.add(window.PATH_IMG + conf.OPTIONS_ELEVATOR.LIFT_OPEN_SPRITE.path);
         loader.add(window.PATH_IMG + conf.OPTIONS_ELEVATOR.LIFT_CLOSE_SPRITE.path);
@@ -38,7 +37,6 @@ define(['PIXI', 'conf', 'underscore'], function (PIXI, conf, _) {
         loader.add(window.PATH_IMG + conf.OPTIONS_LADDER.path);
         loader.add(window.PATH_IMG + conf.OPTIONS_INDICATOR.path);
         loader.add(window.PATH_IMG + conf.IMG.texture);
-        loader.add(window.PATH_IMG + conf.IMG.world);
         loader.load(callback);
     }
 

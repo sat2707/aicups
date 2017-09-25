@@ -38,6 +38,7 @@ class Passenger(object):
         self.reward_ready = False
         self.dest_floor = self.floors_queue.pop(0)
         self.state = self.PASSENGER_STATE['waiting_for_elevator']
+        self.time_to_floor = 0
 
     def get_base_x(self):
         if self.type == settings.PLAYERS['FIRST_PLAYER_KEY']:
@@ -105,17 +106,27 @@ class Passenger(object):
         self.state = self.PASSENGER_STATE['for_delete']
 
     def may_go_to_ladder(self):
-        if self.state in (self.PASSENGER_STATE['waiting_for_elevator'],
-                          self.PASSENGER_STATE['moving_to_elevator'],
-                          self.PASSENGER_STATE['returning']):
+        if self.state in (
+            self.PASSENGER_STATE['waiting_for_elevator'],
+            self.PASSENGER_STATE['moving_to_elevator'],
+            self.PASSENGER_STATE['returning'],
+        ):
             return True
         else:
             return False
 
     def go_to_ladder(self):
         self.time_to_away = settings.PASSENGERS['TIME_TO_AWAY']
-        self.x = sign(self.x) * settings.BUILDING['LADDER_POSITION']
+        if self.type == settings.PLAYERS["FIRST_PLAYER_KEY"]:
+            self.x = -settings.BUILDING['LADDER_POSITION']
+        else:
+            self.x = settings.BUILDING['LADDER_POSITION']
         self.state = self.PASSENGER_STATE['moving_to_floor']
+
+        if self.y < self.dest_floor:
+            self.time_to_floor = abs(self.from_floor - self.dest_floor) * settings.PASSENGERS["SPEED"]["UP"]
+        else:
+            self.time_to_floor = abs(self.from_floor - self.dest_floor) * settings.PASSENGERS["SPEED"]["DOWN"]
 
         if self.elevator:
             if self in self.elevator.passengers:
@@ -148,7 +159,9 @@ class Passenger(object):
 
         if self.state == self.PASSENGER_STATE['moving_to_elevator']:
             if self.elevator.floor == self.floor and self.elevator.is_filling():
-                if abs(self.x - self.elevator.x) >= self.speed:
+                if self.elevator.x < 0 and self.x > self.elevator.x:
+                    self.move(x=sign(self.elevator.x))
+                elif self.elevator.x > 0 and self.x < self.elevator.x:
                     self.move(x=sign(self.elevator.x))
                 elif self.elevator.floor == self.from_floor and self.elevator.can_enter():
                     self.elevator.enter(self)
@@ -163,13 +176,14 @@ class Passenger(object):
 
         if self.state == self.PASSENGER_STATE['moving_to_floor']:
             dest_floor = self.dest_floor
-            if abs(self.y - dest_floor) <= 1./settings.PASSENGERS['SPEED']['UP']:
-                self.arrived_to_floor(dest_floor)
-
             if self.y < dest_floor:
                 self.move(y=1. / settings.PASSENGERS["SPEED"]["UP"])
             elif self.y > dest_floor:
                 self.move(y=-1. / settings.PASSENGERS["SPEED"]["DOWN"])
+            self.time_to_floor -= 1
+
+            if self.time_to_floor == 0:
+                self.arrived_to_floor(dest_floor)
             return
 
         if self.state == self.PASSENGER_STATE['returning']:
@@ -187,6 +201,7 @@ class Passenger(object):
             return
 
         if self.state == self.PASSENGER_STATE['exiting']:
+            self.move_to_floor -= 1
             if self.move_to_floor == 0:
                 self.move_to_floor = settings.PASSENGERS['MOVE_TO_FLOOR']
                 if self.floor == 0 or len(self.floors_queue) == 0:
@@ -196,10 +211,7 @@ class Passenger(object):
                 self.from_floor = self.floor
                 self.dest_floor = self.floors_queue.pop(0)
                 return
-            self.move_to_floor -= 1
-            # if self.elevator.type == settings.PLAYERS['FIRST_PLAYER_KEY']:
-            #     self.move(x=-1)
-            # elif self.elevator.type == settings.PLAYERS['SECOND_PLAYER_KEY']:
+
             self.move(x=sign(self.x))
             return
 

@@ -24,12 +24,12 @@ class Elevator(object):
         self.critical_capacity = settings.ELEVATORS['CRITICAL_CAPACITY']
         self.time_on_the_floor_to_load_enemy_passenger = settings.ELEVATORS['TIME_ON_THE_FLOOR_TO_LOAD_ENEMY_PASSENGER']
 
+        self.time_to_floor = 0
         self.next_floor = -1
         self.passengers = []
-        self.passengers_count = 0
         self.time_on_the_floor = 0
         self.time_on_the_floor_with_opened_doors = 0
-        self.current_filling_delay = 0
+        self.current_filling_delay = settings.ELEVATORS['FILLING_DELAY']
         self.state = self.ELEVATOR_STATE['filling']
 
     def on_tick(self):
@@ -44,6 +44,12 @@ class Elevator(object):
         if self.next_floor != -1 and self.state == self.ELEVATOR_STATE['waiting']:
             if self.floor != self.next_floor:
                 self.state = self.ELEVATOR_STATE['moving']
+
+                if self.y > self.next_floor:
+                    self.time_to_floor = abs(self.floor - self.next_floor) / self.get_speed(with_weight=False)
+                elif self.y < self.next_floor:
+                    self.time_to_floor = abs(self.floor - self.next_floor) / self.get_speed()
+
             else:
                 self.state = self.ELEVATOR_STATE['opening']
             return
@@ -54,21 +60,20 @@ class Elevator(object):
             return
 
         if self.state == self.ELEVATOR_STATE['opening']:
+            self.opening_ticks -= 1
             if self.opening_ticks == 0:
                 self.next_floor = -1
                 self.state = self.ELEVATOR_STATE['filling']
                 self.opening_ticks = settings.ELEVATORS['OPENING_TICKS']
                 return
-            self.opening_ticks -= 1
             return
 
         if self.state == self.ELEVATOR_STATE['filling']:
-            if self.current_filling_delay > self.filling_delay:
+            self.current_filling_delay -= 1
+            if self.current_filling_delay <= 0:
                 can_close = True
             else:
                 can_close = False
-            # for_delete = []
-            self.current_filling_delay += 1
 
             for p in list(self.passengers):
                 if self.floor == p.dest_floor:
@@ -77,17 +82,20 @@ class Elevator(object):
                 can_close = can_close and p.is_using_elevator()
 
             if self.next_floor != -1 and can_close and self.next_floor != self.floor:
-                self.current_filling_delay = 0
+                self.current_filling_delay = settings.ELEVATORS['FILLING_DELAY']
                 self.state = self.ELEVATOR_STATE['closing']
             return
 
         if self.state == self.ELEVATOR_STATE['closing']:
+            self.closing_ticks -= 1
             if self.closing_ticks == 0:
                 self.state = self.ELEVATOR_STATE['waiting']
                 self.closing_ticks = settings.ELEVATORS['CLOSING_TICKS']
                 return
-            self.closing_ticks -= 1
             return
+
+    def is_full(self):
+        return len(self.passengers) == self.critical_capacity
 
     def get_type(self):
         return self.type
@@ -142,14 +150,13 @@ class Elevator(object):
         return self.floor
 
     def go_to_floor(self, floor):
-        # if self.x < 0:
-            # print self.id, self.floor, self.y, floor, self.passengers
         if 0 < floor <= settings.BUILDING['FLOORS_COUNT'] and not self.is_moving():
             self.next_floor = floor
 
     def moving(self):
+        self.time_to_floor -= 1
         dest_floor = self.next_floor
-        if abs(self.y - dest_floor) <= self.get_speed():
+        if self.time_to_floor <= 0:
             self.floor = dest_floor
             self.y = dest_floor
 
@@ -183,7 +190,6 @@ class Elevator(object):
             p.move_in_elevator()
 
     def move(self, with_weight=True, **kwargs):
-        self.x += kwargs.get('x', 0) * self.get_speed()
         self.y += kwargs.get('y', 0) * self.get_speed(with_weight=with_weight)
 
     def is_moving(self):
