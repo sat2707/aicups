@@ -1,6 +1,8 @@
 #ifndef BASE_STRATEGY_H
 #define BASE_STRATEGY_H
 
+#include "api.h"
+
 class BaseStrategy
 {
 private:

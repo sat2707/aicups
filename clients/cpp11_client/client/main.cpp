@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include "core/client.h"
-#include "core/api.h"
+#include "core/api_elevators.h"
 #include <cstdlib>
 #include <QHostInfo>
 
@@ -9,7 +9,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
 
 int lookup_host(const char* host, char* addrstr) {
     struct addrinfo hints, *res;
