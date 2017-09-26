@@ -77,11 +77,7 @@ namespace Api
 			this.id = (int)elevator.GetValue("id");
 			this.y = (float)elevator.GetValue("y");
 
-			this.passengers = new List<Passenger>();
-			foreach (Object passennger in (JArray)elevator.GetValue("passengers"))
-			{
-				passengers.Add(new Passenger((JObject)passennger));
-			}
+			this.passengers = Helpers.ParsePassengers(elevator, "passengers");
 
 			this.state = (int)elevator.GetValue("state");
 			this.speed = (float)elevator.GetValue("speed");
@@ -190,12 +186,18 @@ namespace Api
 		public Passenger (JObject passenger)
 		{
 			id = (int)passenger.GetValue ("id");
-			try {
-				elevator = (int)passenger.GetValue ("elevator");
+			
+			JToken jToken = passenger.GetValue ("elevator");
+
+			if (jToken != null && jToken.Type == JTokenType.Integer)
+			{
+			    elevator = (int)jToken;
 			}
-			catch (System.ArgumentException) {
+			else
+			{ 
 				elevator = -1;
 			}
+			
 			x = (float)passenger.GetValue("x");
 			y = (float)passenger.GetValue("y");
 			weight = (float)passenger.GetValue("weight");
@@ -297,27 +299,11 @@ namespace Api
 
 		private Tuple<List<Passenger>, List<Elevator>, List<Passenger>, List<Elevator>> parseState (JObject state)
 		{
-			List<Passenger> myPassengers = new List<Passenger>();
-			List<Elevator> myElevators = new List<Elevator>(3);
+			List<Passenger> myPassengers = Helpers.ParsePassengers(state, "my_passengers");
+			List<Elevator> myElevators = Helpers.ParseElevators(state, "my_elevators");
 
-			foreach (Object passennger in (JArray) state.GetValue("my_passengers")) {
-				myPassengers.Add (new Passenger ((JObject)passennger));
-			}
-			foreach (Object elevator in (JArray) state.GetValue("my_elevators")) {
-				myElevators.Add (new Elevator ((JObject)elevator));
-			}
-
-			List<Passenger> enemyPassengers = new List<Passenger>();
-			List<Elevator> enemyElevators = new List<Elevator>(3);
-
-			foreach (Object passennger in (JArray)state.GetValue("enemy_passengers"))
-			{
-				enemyPassengers.Add(new Passenger((JObject)passennger));
-			}
-			foreach (Object elevator in (JArray)state.GetValue("enemy_elevators"))
-			{
-				enemyElevators.Add(new Elevator((JObject)elevator));
-			}
+			List<Passenger> enemyPassengers = Helpers.ParsePassengers(state, "enemy_passengers");
+			List<Elevator> enemyElevators = Helpers.ParseElevators(state, "enemy_elevators");
 
 
 			return new Tuple<List<Passenger>, List<Elevator>, List<Passenger>, List<Elevator>>(myPassengers, myElevators, enemyPassengers, enemyElevators);
@@ -352,7 +338,37 @@ namespace Api
 
 			return resultArray;
 		}
+	}
+	
+	static class Helpers
+	{
+		public static List<Passenger> ParsePassengers(JObject jObject, string propertyName)
+		{
+			var values = (JArray)jObject.GetValue(propertyName);
 
+			List<Passenger> passengers = new List<Passenger>(values.Count);
+
+			foreach (JObject passenger in values)
+			{
+				passengers.Add(new Passenger(passenger));
+			}
+
+			return passengers;
+        }
+
+		public static List<Elevator> ParseElevators(JObject jObject, string propertyName)
+		{
+			var values = (JArray)jObject.GetValue(propertyName);
+
+			List<Elevator> elevators = new List<Elevator>(values.Count);
+
+			foreach (JObject elevator in values)
+			{
+				elevators.Add(new Elevator(elevator));
+			}
+
+			return elevators;
+        }
 	}
 }
 
