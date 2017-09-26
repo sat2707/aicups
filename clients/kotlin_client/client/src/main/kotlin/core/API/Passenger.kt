@@ -17,6 +17,7 @@ class Passenger(passenger: JSONObject) : MessagesInterface{
   private val messages = ArrayList<JSONObject>()
   var x: Double = passenger["x"]?.toString()?.toDouble() ?: 0.0
   var y: Double = passenger["y"]?.toString()?.toDouble() ?: 0.0
+  val weight: Double = passenger["weight"]?.toString()?.toDouble() ?: 1.0
 
   override fun getMessages(): List<JSONObject> = messages
 
