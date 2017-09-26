@@ -133,7 +133,7 @@ class WorldHandler(object):
     def write_result(data):
         f = open('{}/../visualizer/game.js'.format(os.path.dirname(os.path.realpath(__file__))), 'w')
         f.write("var data = ")
-        f.write(json.dumps(data))
+        f.write(json.dumps(data, indent=4))
         f.write(";")
         f.close()
 

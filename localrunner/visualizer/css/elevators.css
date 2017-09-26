@@ -11,14 +11,14 @@
     height: 70%;
 }
 
-#console {
+.console {
     background: #000;
     color: #fff;
     display: block;
     overflow: auto;
 }
 
-#console span {
+.console span {
     word-wrap: break-word;
     max-width: 430px;
     display: inline-block;
