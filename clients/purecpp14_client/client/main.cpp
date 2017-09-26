@@ -7,7 +7,7 @@
 #include "csimplesocket/ActiveSocket.h"
 #include "json.hpp"
 #include "core/api.h"
-#include "strategy.h"
+#include "core/strategy.h"
 
 using json = nlohmann::json;
 
@@ -102,7 +102,7 @@ public:
             uint8 * data = client.GetData();
             uint8 * data_end = data + numBytes;
             uint8 * endOfLine;
-            while ((endOfLine = std::find(data, data + numBytes, '\n')) < data_end)
+            while ((endOfLine = std::find(data, data_end, '\n')) < data_end)
             {
                 line.append(data, endOfLine);
                 if (!doCommand(line))

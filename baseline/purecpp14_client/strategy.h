@@ -2,8 +2,8 @@
 #define STRATEGY_H
 
 #include <vector>
-#include "core/base_strategy.h"
-#include "core/api.h"
+#include "base_strategy.h"
+#include "api.h"
 
 class Strategy : public BaseStrategy
 {

@@ -14,6 +14,10 @@ for %%i in (*.cpp) do (
     set FILES=!FILES! %%i
 )
 
+for %%i in (core\*.cpp) do (
+    set FILES=!FILES! %%i
+)
+
 for %%i in (csimplesocket\*.cpp) do (
     set FILES=!FILES! %%i
 )

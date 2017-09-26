@@ -1,6 +1,11 @@
 files=""
 
-for i in *.cpp
+for i in core/*.cpp
+do
+    files="$files $i"
+done
+
+for i in ./*.cpp
 do
     files="$files $i"
 done
