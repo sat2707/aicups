@@ -38,7 +38,7 @@ func (a *API) parseState(state map[string]interface{}) ([]*Passenger, []*Elevato
 }
 
 func (a *API) Turn(state map[string]interface{}) []interface{}{
-	var messages []interface{}
+	messages := []interface{}{}
 
 	myPassengers, myElevators, enemyPassengers, enemyElevators := a.parseState(state)
 

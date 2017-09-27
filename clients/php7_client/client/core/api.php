@@ -194,7 +194,8 @@
                     $p->from_floor,
                     $p->dest_floor,
                     $p->type,
-                    $p->floor
+                    $p->floor,
+                    $p->weight
                 );
             }, $enemy_passengers);
 
