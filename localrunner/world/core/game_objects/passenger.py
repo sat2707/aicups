@@ -161,8 +161,12 @@ class Passenger(object):
             if self.elevator.floor == self.floor and self.elevator.is_filling():
                 if self.elevator.x < 0 and self.x > self.elevator.x:
                     self.move(x=sign(self.elevator.x))
+				elif self.elevator.x < 0 and self.x < self.elevator.x:
+                    self.move(x=-sign(self.elevator.x))
                 elif self.elevator.x > 0 and self.x < self.elevator.x:
                     self.move(x=sign(self.elevator.x))
+				elif self.elevator.x > 0 and self.x > self.elevator.x:
+                    self.move(x=-sign(self.elevator.x))
                 elif self.elevator.floor == self.from_floor and self.elevator.can_enter():
                     self.elevator.enter(self)
                     self.state = self.PASSENGER_STATE['using_elevator']
