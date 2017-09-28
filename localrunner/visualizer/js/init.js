@@ -9,15 +9,14 @@ define([
     'underscore'
 ], function (conf, Building, PIXI, _) {
 
-    function World(data, config, renderer, scoreSetter, timeLine, console, debugInfo) {
+    function World(data, config, renderer, scoreSetter, timeLine, leftConsole, rightConsole) {
         this.data = data;
         this.config = config;
         this.renderer = renderer;
         this.scoreAndTimeSetter = scoreSetter;
         this.timeLine = timeLine;
-        this.console = console;
-        this.debug = debugInfo;
-
+        this.leftConsole = leftConsole;
+        this.rightConsole = rightConsole;
         this.stage = new PIXI.Container();
 
         this.tilingTexture = new PIXI.extras.TilingSprite.fromFrame(window.PATH_IMG + conf.IMG.texture, renderer.width, renderer.height * 3);
@@ -41,9 +40,8 @@ define([
     }
 
     World.prototype.clearConsole = function () {
-        if (this.console) {
-            this.console.html('');
-        }
+        this.leftConsole.html('');
+        this.rightConsole.html('');
     };
 
     World.prototype.createTicker = function () {
@@ -99,7 +97,8 @@ define([
     };
 
     World.prototype.rewind = function (tick, callback) {
-        if (this.debug) this.printToConsole(Math.min(20, Math.abs(this.tickNum - tick)));
+        this.clearConsole();
+        this.printToConsoles(Math.min(20, Math.abs(this.tickNum - tick)));
         this.tickNum = tick - 1;
         this.mechanicTick();
         this.animationTick();
@@ -108,25 +107,33 @@ define([
         }
     };
 
-    World.prototype.printToConsole = function (ticksPerFrame) {
+    World.prototype.printToConsoles = function (ticksPerFrame) {
 
-        var print = function (text, type, index) {
-            if (this.console.children().length > conf.CONSOLE_VOL) {
-                this.console.children().remove(':nth-child(-n+10)');
+        var print = function (text, type, index, console) {
+            if (console.children().length > conf.CONSOLE_VOL) {
+                console.children().remove(':nth-child(-n+10)');
             }
-            this.console.append('<br><span>Tick[' + (this.tickNum - (ticksPerFrame - index) + 1) + '] ' + type +': ' + _.escape(text) + '</span>');
-            this.console[0].scrollTop = this.console[0].scrollHeight;
+            console.append('<br><span>Tick[' + (this.tickNum - (ticksPerFrame - index) + 1) + '] ' + type +': ' + _.escape(text) + '</span>');
+            console[0].scrollTop = console[0].scrollHeight;
         }.bind(this);
 
-        _.each(this.debug.slice(this.tickNum - ticksPerFrame, this.tickNum), function (obj, index) {
-            _.each(obj, function (values, key) {
+        var self = this;
+        _.each(this.data.slice(this.tickNum - ticksPerFrame, this.tickNum),  function (obj, index) {
+            var debugInfo = obj.debug;
+
+            _.each(debugInfo['FIRST_PLAYER'], function (values, key) {
                 _.each(values, function (value) {
-                    print(value, key, index);
+                    print(value, key, index, self.leftConsole);
                 })
             });
-        })
-    };
 
+            _.each(debugInfo['SECOND_PLAYER'], function (values, key) {
+                _.each(values, function (value) {
+                    print(value, key, index, self.rightConsole);
+                })
+            });
+        });
+    };
 
     World.prototype.show = function () {
         var self = this;
@@ -140,7 +147,7 @@ define([
                     self.tickNum = self.tickCount - 1;
                     self.mechanicTick();
                     self.animationTick();
-                    if (self.debug) self.printToConsole(ticksPerFrame);
+                    self.printToConsoles(ticksPerFrame);
                     cancelAnimationFrame(self.animationId);
                     self.tickNum = 0;
                     self.animationId = undefined;
@@ -154,7 +161,7 @@ define([
                 }
                 self.mechanicTick();
                 self.animationTick();
-                if (self.debug) self.printToConsole(ticksPerFrame);
+                self.printToConsoles(ticksPerFrame);
                 self.timeLine.val(self.tickNum);
                 prevTickTime = currentTickTime;
 
@@ -166,11 +173,11 @@ define([
     };
     var world = null;
 
-    function initWorld(data, config, renderer, scoreSetter, timeLine, console, debugInfo) {
+    function initWorld(data, config, renderer, scoreSetter, timeLine, leftConsole, rightConsole) {
         if (world) {
             world.destroy();
         }
-        world = new World(data, config, renderer, scoreSetter, timeLine, console, debugInfo);
+        world = new World(data, config, renderer, scoreSetter, timeLine, leftConsole, rightConsole);
         return world;
     }
 

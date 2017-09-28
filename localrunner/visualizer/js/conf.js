@@ -79,19 +79,7 @@ define([], function () {
             floorXShift: -5,
             floorYShift: -5
         },
-        OPTIONS_DOOR: {
-            width: 31,
-            height: 56.8,
-            openDoorPositionX: 7,
-            closeDoorPositionX: 456,
-            OPEN_ANIMATION: {
-                path: 'motion/door/70x126/door{}.png',
-                count: 11,
-                speed: 0.5
-            }
-        },
         IMG: {
-            world: '1/scene.png',
             texture: '1/pattern.png',
             floor: '1/floor.png'
         },

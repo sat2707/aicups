@@ -14,15 +14,6 @@ define(['conf', 'underscore'], function (conf, _) {
         }
     }
 
-    function getVisio(url) {
-        return new Promise(function (resolve, reject) {
-            $.get(url).done(function (result) {
-                result = JSON.parse(result);
-                resolve(result);
-            });
-        })
-    }
-
     function registerEvents(init) {
         var runButton = $('.js-run');
         var pauseButton = $('.js-pause');
@@ -31,9 +22,8 @@ define(['conf', 'underscore'], function (conf, _) {
         var x4Button = $('.js-x4');
         var range = $('.range');
         var currentSpan = $('.js-score-time-user');
-        // var world = null;
-        // var renderer = null;
-
+        var leftConsole = $('#left-console');
+        var rightConsole = $('#right-console');
 
         var visio = data;
         var config = visio.config;
@@ -45,13 +35,15 @@ define(['conf', 'underscore'], function (conf, _) {
         conf.HEIGHT = (config.FLOORS_COUNT + 1) * conf.FLOOR_HEIGHT;
 
         var renderer = new PIXI.autoDetectRenderer(conf.WIDTH, conf.HEIGHT);
-        var world = init.initWorld(visio.game_data, config, renderer, scoreAndTimeSetter(currentSpan, visio.players), range);
+        var world = init.initWorld(visio.game_data, config, renderer, scoreAndTimeSetter(currentSpan, visio.players), range, leftConsole, rightConsole);
 
         range.val(0);
         range.prop("disabled", false);
         range.removeClass('btn_disabled');
 
         ww.html(renderer.view);
+        leftConsole.height(ww.height());
+        rightConsole.height(ww.height());
         $('.preloader').fadeOut();
 
 

@@ -40,7 +40,7 @@ class Building(object):
         return self.players_elevators.get(player)
 
     def set_passenger_elevator(self, passenger, elevator):
-        if (passenger.is_waiting_for_elevator() or passenger.is_returning()) and elevator.current_floor() == passenger.from_floor and elevator.is_filling():
+        if (passenger.is_waiting_for_elevator() or passenger.is_returning()) and elevator.current_floor() == passenger.from_floor and elevator.is_filling() and not elevator.is_full():
             if passenger.elevator:
                 passenger_elevator_distance = abs(passenger.x - passenger.elevator.x)
                 passenger_new_elevator_distance = abs(passenger.x - elevator.x)
