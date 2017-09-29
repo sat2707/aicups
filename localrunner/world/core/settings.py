@@ -1,4 +1,12 @@
-from random import randint
+from random import randint, seed
+import sys
+
+try:
+    sd = int(sys.argv[1])
+except (ValueError, TypeError, IndexError):
+    sd = randint(0, 10000000)
+
+seed(sd)
 
 PLAYERS = {
     "FIRST_PLAYER_KEY": "FIRST_PLAYER",
@@ -20,6 +28,7 @@ BUILDING_VISIO = {
     'FLOORS_COUNT': 9,
     'FIRST_FLOOR': 1,
     'INDICATOR_POSITION': 350,
+    'SEED': sd
 }
 
 BUILDING.update(BUILDING_VISIO)

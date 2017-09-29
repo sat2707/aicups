@@ -35,30 +35,38 @@
             <input type="range" min="0" max="7199" step="1" value="0" class="range slider btn_disabled"
                    style="margin-bottom: 14px; " disabled/>
             <br/>
-            <div class="toolbar__play">
-                <div class="js-run toolbar__btn">
-                    <i class="icon-play"></i>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="toolbar__play">
+                        <div class="js-run toolbar__btn">
+                            <i class="icon-play"></i>
+                        </div>
+                        <div class="js-pause toolbar__btn btn_disabled">
+                            <i class="icon-pause"></i>
+                        </div>
+                        <div class="js-x1 toolbar__btn pressed" style="margin-left: 20px;">
+                            <span>x1</span>
+                        </div>
+                        <div class="js-x2 toolbar__btn">
+                            <span>x2</span>
+                        </div>
+                        <div class="js-x4 toolbar__btn">
+                            <span>x4</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="js-pause toolbar__btn btn_disabled">
-                    <i class="icon-pause"></i>
+                <div class="col-sm-6">
+                    <div class="toolbar__user js-score-time-user" data-href="{% url 'contest:get_user_by_solution' %}">
+                        Игрок слева: <span class="js-username-first-player"
+                                           data-href-template="{% url 'core:open_profile' 0 %}"></span> <span
+                            class="user__score js-current-score-first-player">0</span> очков,<br/>
+                        Игрок справа: <span class="js-username-second-player"
+                                            data-href-template="{% url 'core:open_profile' 0 %}"></span> <span
+                            class="user__score js-current-score-second-player">0</span> очков,<br/>
+                        Осталось: <span class="js-till-time">02:00</span><br/>
+                        Seed: <span class="js-seed">&mdash;</span>
+                    </div>
                 </div>
-                <div class="js-x1 toolbar__btn pressed" style="margin-left: 20px;">
-                    <span>x1</span>
-                </div>
-                <div class="js-x2 toolbar__btn">
-                    <span>x2</span>
-                </div>
-                <div class="js-x4 toolbar__btn">
-                    <span>x4</span>
-                </div>
-            </div>
-            <br/>
-            <div class="toolbar__user js-score-time-user">
-                Игрок слева: <span class="js-username-first-player"></span> <span
-                    class="user__score js-current-score-first-player">0</span> очков,<br/>
-                Игрок справа: <span class="js-username-second-player"></span> <span
-                    class="user__score js-current-score-second-player">0</span> очков,<br/>
-                Осталось: <span class="js-till-time">02:00</span>
             </div>
         </div>
     </div>
