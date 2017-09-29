@@ -67,19 +67,19 @@ define(['conf', 'underscore'], function (conf, _) {
         });
 
         runButton.click(function () {
-            if ($(this).hasClass('btn_disabled')) return;
+            if ($(this).hasClass('hidden')) return;
             init.playWorld(function () {
                 pauseButton.click();
             });
-            pauseButton.removeClass('btn_disabled');
-            $(this).addClass('btn_disabled');
+            pauseButton.removeClass('hidden');
+            $(this).addClass('hidden');
         });
         pauseButton.click(function () {
-            if ($(this).hasClass('btn_disabled'))
+            if ($(this).hasClass('hidden'))
                 return;
             init.pauseWorld();
-            $(this).addClass('btn_disabled');
-            runButton.removeClass('btn_disabled');
+            $(this).addClass('hidden');
+            runButton.removeClass('hidden');
         });
 
         range.on('input', function () {
