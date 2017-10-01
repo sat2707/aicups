@@ -24,6 +24,7 @@ define(['conf', 'underscore'], function (conf, _) {
         var currentSpan = $('.js-score-time-user');
         var leftConsole = $('#left-console');
         var rightConsole = $('#right-console');
+        var seedSpan = $('.js-seed');
 
         var visio = data;
         var config = visio.config;
@@ -33,6 +34,7 @@ define(['conf', 'underscore'], function (conf, _) {
         conf.WIDTH = ww.width();
         conf.FLOOR_HEIGHT *= conf.MULTIPL;
         conf.HEIGHT = (config.FLOORS_COUNT + 1) * conf.FLOOR_HEIGHT;
+        seedSpan.html(config.SEED || '&mdash;');
 
         var renderer = new PIXI.autoDetectRenderer(conf.WIDTH, conf.HEIGHT);
         var world = init.initWorld(visio.game_data, config, renderer, scoreAndTimeSetter(currentSpan, visio.players), range, leftConsole, rightConsole);
