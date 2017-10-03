@@ -208,6 +208,7 @@ class Passenger(object):
                 self.state = self.PASSENGER_STATE['walking_on_floor']
                 self.from_floor = self.floor
                 self.dest_floor = self.floors_queue.pop(0)
+                self.elevator = None
                 return
 
             self.move(x=sign(self.x))
