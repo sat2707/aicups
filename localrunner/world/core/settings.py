@@ -4,7 +4,7 @@ import sys
 try:
     sd = int(sys.argv[1])
 except (ValueError, TypeError, IndexError):
-    sd = randint(0, 10000000)
+    sd = randint(0, 10**12)
 
 seed(sd)
 

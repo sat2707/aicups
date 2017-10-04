@@ -160,7 +160,7 @@ class Passenger(object):
         if self.state == self.PASSENGER_STATE['moving_to_elevator']:
             if self.elevator.floor == self.floor and self.elevator.is_filling():
                 if abs(self.x - self.elevator.x) >= self.speed:
-                    self.move(x=sign(self.elevator.x))
+                    self.move(x=sign(self.elevator.x - self.x))
                 elif self.elevator.floor == self.from_floor and self.elevator.can_enter():
                     self.elevator.enter(self)
                     self.state = self.PASSENGER_STATE['using_elevator']
@@ -219,6 +219,7 @@ class Passenger(object):
                 self.state = self.PASSENGER_STATE['waiting_for_elevator']
                 self.time_to_away = settings.PASSENGERS['TIME_TO_AWAY']
                 self.x = self.get_base_x()
+                self.elevator = None
                 return
             self.walking_time -= 1
             return
